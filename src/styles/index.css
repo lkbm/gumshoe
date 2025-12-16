@@ -1,0 +1,344 @@
+/* Gumshoe - Retro DOS-style CSS */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-color: #1a1a1a;
+  --wall-color: #666;
+  --room-bg: #0a0a0a;
+  --text-color: #ccc;
+  --text-bright: #fff;
+  --player-color: #ffff00;
+  --npc-color: #00ffff;
+  --item-color: #ff8800;
+  --door-color: #444;
+  --door-hover: #888;
+  --btn-bg: #333;
+  --btn-hover: #444;
+  --btn-disabled: #222;
+  --btn-danger: #882222;
+  --selected-color: #44ff44;
+}
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* Header */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 2px solid var(--wall-color);
+  margin-bottom: 10px;
+}
+
+.game-header h1 {
+  font-size: 24px;
+  color: var(--text-bright);
+  letter-spacing: 4px;
+}
+
+.inventory {
+  font-size: 14px;
+  color: var(--item-color);
+}
+
+/* Main map area */
+.game-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 10px;
+  min-height: 0; /* Important for flex shrinking */
+}
+
+.map-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.map {
+  background-color: var(--wall-color);
+  transform-origin: center center;
+}
+
+/* Rooms */
+.room {
+  position: absolute;
+  background-color: var(--room-bg);
+  border: 3px solid var(--wall-color);
+  overflow: hidden;
+}
+
+.room-current {
+  background-color: #111;
+}
+
+.room-name {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 10px;
+  color: var(--text-color);
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Entities (NPCs and Items) */
+.entity {
+  position: absolute;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.1s;
+}
+
+.entity:hover {
+  transform: scale(1.1);
+}
+
+.entity.selected {
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.5);
+  }
+}
+
+.entity-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.npc .entity-icon {
+  color: var(--npc-color);
+}
+
+.item .entity-icon {
+  color: var(--item-color);
+  font-size: 12px;
+}
+
+.entity-name {
+  font-size: 8px;
+  color: var(--text-color);
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+.entity.selected .entity-icon {
+  color: var(--selected-color);
+}
+
+/* Player */
+.player {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.player-icon {
+  font-size: 24px;
+  color: var(--player-color);
+}
+
+/* Doors */
+.door {
+  position: absolute;
+  background-color: var(--door-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: background-color 0.2s;
+}
+
+.door:hover {
+  background-color: var(--door-hover);
+}
+
+.door-arrow {
+  color: var(--text-color);
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+.door:hover .door-arrow {
+  opacity: 1;
+  color: var(--text-bright);
+}
+
+/* Footer - Text panel and commands */
+.game-footer {
+  border-top: 2px solid var(--wall-color);
+  padding-top: 10px;
+}
+
+/* Text Panel */
+.text-panel {
+  background-color: var(--room-bg);
+  border: 2px solid var(--wall-color);
+  padding: 15px;
+  min-height: 180px;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.message {
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.message:last-of-type {
+  color: var(--text-bright);
+}
+
+.prompt {
+  color: var(--text-color);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Command Bar */
+.command-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  background-color: var(--room-bg);
+  border: 2px solid var(--wall-color);
+}
+
+.cmd-btn {
+  background-color: var(--btn-bg);
+  color: var(--text-color);
+  border: 2px solid var(--wall-color);
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.1s;
+}
+
+.cmd-btn:hover:not(:disabled) {
+  background-color: var(--btn-hover);
+  color: var(--text-bright);
+  border-color: var(--text-color);
+}
+
+.cmd-btn:disabled {
+  background-color: var(--btn-disabled);
+  color: #444;
+  cursor: not-allowed;
+  border-color: #333;
+}
+
+.cmd-btn-primary {
+  background-color: #225522;
+  border-color: #44aa44;
+}
+
+.cmd-btn-primary:hover:not(:disabled) {
+  background-color: #337733;
+}
+
+.cmd-btn-danger {
+  background-color: var(--btn-danger);
+  border-color: #aa4444;
+}
+
+.cmd-btn-danger:hover:not(:disabled) {
+  background-color: #aa3333;
+}
+
+.cmd-btn-secondary {
+  background-color: #222;
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.cmd-separator {
+  width: 2px;
+  background-color: var(--wall-color);
+  margin: 0 4px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--room-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--wall-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .command-bar {
+    justify-content: center;
+  }
+
+  .cmd-separator {
+    display: none;
+  }
+}
