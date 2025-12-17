@@ -220,8 +220,22 @@ body {
   opacity: 0.5;
 }
 
-.door:hover .door-arrow {
+.door:hover:not(.door-inactive) .door-arrow {
   opacity: 1;
+}
+
+.door-inactive {
+  cursor: default;
+  background-color: transparent;
+  z-index: 10;
+}
+
+.door-inactive:hover {
+  background-color: transparent;
+}
+
+.door-inactive .door-arrow {
+  opacity: 0.3;
   color: var(--text-bright);
 }
 
@@ -236,8 +250,7 @@ body {
   background-color: var(--room-bg);
   border: 2px solid var(--wall-color);
   padding: 15px;
-  min-height: 180px;
-  max-height: 220px;
+  height: 180px;
   overflow-y: auto;
   margin-bottom: 10px;
 }

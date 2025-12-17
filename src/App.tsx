@@ -54,6 +54,33 @@ export function App() {
     [gameState]
   );
 
+  // Arrow key navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const directionMap: Record<string, 'north' | 'south' | 'east' | 'west'> = {
+        ArrowUp: 'north',
+        ArrowDown: 'south',
+        ArrowRight: 'east',
+        ArrowLeft: 'west',
+      };
+
+      const direction = directionMap[e.key];
+      if (!direction) return;
+
+      const currentRoomData = findRoom(gameState, gameState.currentRoom);
+      if (!currentRoomData) return;
+
+      const door = currentRoomData.doors.find((d) => d.direction === direction);
+      if (door) {
+        e.preventDefault();
+        handleMoveToRoom(door.toRoomId);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameState, handleMoveToRoom]);
+
   const handleSelectNPC = useCallback((npcId: string) => {
     setGameState((state) => ({
       ...state,

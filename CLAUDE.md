@@ -90,4 +90,4 @@ npm run preview      # Preview production build
 There are a couple screenshots of the original Sleuth game in the `sleuth_screenshots/` folder for reference.
 
 ## TODOs
-* Arrow key movement, and type to do actions?
+* Type to do actions?

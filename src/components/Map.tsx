@@ -62,8 +62,6 @@ export function Map({
     return () => window.removeEventListener('resize', updateScale);
   }, [mapWidth, mapHeight]);
 
-  const currentRoomData = rooms.find((r) => r.id === currentRoom);
-
   return (
     <div class="map-container" ref={containerRef}>
       <div
@@ -89,15 +87,37 @@ export function Map({
             selectedEntity={selectedEntity}
           />
         ))}
-        {/* Render doors separately so they're clickable */}
-        {currentRoomData?.doors.map((door, idx) => (
-          <DoorComponent
-            key={`${currentRoom}-door-${idx}`}
-            door={door}
-            room={currentRoomData}
-            onMove={onMoveToRoom}
-          />
-        ))}
+        {/* Render inactive door markers for non-current rooms (deduplicated) */}
+        {rooms
+          .filter((room) => room.id !== currentRoom)
+          .flatMap((room) =>
+            room.doors
+              // Only render if connecting to a room with lower ID (deduplication)
+              .filter((door) => room.id < door.toRoomId)
+              .map((door, idx) => (
+                <DoorComponent
+                  key={`${room.id}-door-${idx}`}
+                  door={door}
+                  room={room}
+                  targetRoom={rooms.find((r) => r.id === door.toRoomId)}
+                  isCurrent={false}
+                  onMove={onMoveToRoom}
+                />
+              ))
+          )}
+        {/* Render active doors for current room (on top) */}
+        {rooms
+          .find((r) => r.id === currentRoom)
+          ?.doors.map((door, idx) => (
+            <DoorComponent
+              key={`current-door-${idx}`}
+              door={door}
+              room={rooms.find((r) => r.id === currentRoom)!}
+              targetRoom={rooms.find((r) => r.id === door.toRoomId)}
+              isCurrent={true}
+              onMove={onMoveToRoom}
+            />
+          ))}
       </div>
     </div>
   );
@@ -193,11 +213,13 @@ function RoomComponent({
 interface DoorComponentProps {
   door: Door;
   room: Room;
+  targetRoom: Room | undefined;
+  isCurrent: boolean;
   onMove: (roomId: string) => void;
 }
 
-function DoorComponent({ door, room, onMove }: DoorComponentProps) {
-  // Calculate door position based on direction
+function DoorComponent({ door, room, targetRoom, isCurrent, onMove }: DoorComponentProps) {
+  // Calculate door position based on the shared edge between rooms
   let left = 0;
   let top = 0;
   let width = 0;
@@ -209,50 +231,88 @@ function DoorComponent({ door, room, onMove }: DoorComponentProps) {
   const roomHeight = room.height * GRID_SIZE;
   const doorPixelWidth = DOOR_WIDTH * GRID_SIZE;
 
+  // Calculate shared edge for east/west doors (vertical walls)
+  const getSharedVerticalEdge = () => {
+    if (!targetRoom) return { start: roomTop, length: roomHeight };
+    const thisTop = room.y * GRID_SIZE;
+    const thisBottom = (room.y + room.height) * GRID_SIZE;
+    const otherTop = targetRoom.y * GRID_SIZE;
+    const otherBottom = (targetRoom.y + targetRoom.height) * GRID_SIZE;
+    const sharedTop = Math.max(thisTop, otherTop);
+    const sharedBottom = Math.min(thisBottom, otherBottom);
+    return { start: sharedTop, length: sharedBottom - sharedTop };
+  };
+
+  // Calculate shared edge for north/south doors (horizontal walls)
+  const getSharedHorizontalEdge = () => {
+    if (!targetRoom) return { start: roomLeft, length: roomWidth };
+    const thisLeft = room.x * GRID_SIZE;
+    const thisRight = (room.x + room.width) * GRID_SIZE;
+    const otherLeft = targetRoom.x * GRID_SIZE;
+    const otherRight = (targetRoom.x + targetRoom.width) * GRID_SIZE;
+    const sharedLeft = Math.max(thisLeft, otherLeft);
+    const sharedRight = Math.min(thisRight, otherRight);
+    return { start: sharedLeft, length: sharedRight - sharedLeft };
+  };
+
   switch (door.direction) {
-    case 'north':
-      left = roomLeft + roomWidth * door.position - doorPixelWidth / 2;
+    case 'north': {
+      const shared = getSharedHorizontalEdge();
+      left = shared.start + shared.length * door.position - doorPixelWidth / 2;
       top = roomTop - WALL_WIDTH;
       width = doorPixelWidth;
       height = WALL_WIDTH * 3;
       break;
-    case 'south':
-      left = roomLeft + roomWidth * door.position - doorPixelWidth / 2;
+    }
+    case 'south': {
+      const shared = getSharedHorizontalEdge();
+      left = shared.start + shared.length * door.position - doorPixelWidth / 2;
       top = roomTop + roomHeight - WALL_WIDTH;
       width = doorPixelWidth;
       height = WALL_WIDTH * 3;
       break;
-    case 'east':
+    }
+    case 'east': {
+      const shared = getSharedVerticalEdge();
       left = roomLeft + roomWidth - WALL_WIDTH;
-      top = roomTop + roomHeight * door.position - doorPixelWidth / 2;
+      top = shared.start + shared.length * door.position - doorPixelWidth / 2;
       width = WALL_WIDTH * 3;
       height = doorPixelWidth;
       break;
-    case 'west':
+    }
+    case 'west': {
+      const shared = getSharedVerticalEdge();
       left = roomLeft - WALL_WIDTH;
-      top = roomTop + roomHeight * door.position - doorPixelWidth / 2;
+      top = shared.start + shared.length * door.position - doorPixelWidth / 2;
       width = WALL_WIDTH * 3;
       height = doorPixelWidth;
       break;
+    }
   }
 
   return (
     <div
-      class="door"
+      class={`door ${isCurrent ? '' : 'door-inactive'}`}
       style={{
         left: `${left}px`,
         top: `${top}px`,
         width: `${width}px`,
         height: `${height}px`,
       }}
-      onClick={() => onMove(door.toRoomId)}
-      title={`Go to ${door.toRoomId}`}
+      onClick={isCurrent ? () => onMove(door.toRoomId) : undefined}
+      title={isCurrent ? `Go to ${door.toRoomId}` : undefined}
     >
       <span class="door-arrow">
-        {door.direction === 'north' && '▲'}
-        {door.direction === 'south' && '▼'}
-        {door.direction === 'east' && '▶'}
-        {door.direction === 'west' && '◀'}
+        {isCurrent ? (
+          <>
+            {door.direction === 'north' && '▲'}
+            {door.direction === 'south' && '▼'}
+            {door.direction === 'east' && '▶'}
+            {door.direction === 'west' && '◀'}
+          </>
+        ) : (
+          '□'
+        )}
       </span>
     </div>
   );
