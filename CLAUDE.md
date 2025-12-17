@@ -14,15 +14,52 @@ The application is a single-page app that allows users to walk around a map, tal
 
 ## Architecture
 
-### Frontend (src/App.tsx)
-- Uses Preact hooks for state management
+### Component Structure
+```
+App.tsx (main component, holds all game state)
+├── Map (src/components/Map.tsx) - renders rooms, doors, entities
+├── TextPanel (src/components/TextPanel.tsx) - message log display
+└── CommandBar (src/components/CommandBar.tsx) - action buttons
+```
 
-### Backend (src/main.tsx)
-- OPTIONAL: Hono server with simple REST API:
-  - `GET /api/state/:key` - retrieve data
-  - `PUT /api/state/:key` - save data
-- Serves static assets from /dist
-- OPTIONAL: Uses Cloudflare KV namespace "gumshoe" for persistence
+### Key Files
+- `src/game/types.ts` - TypeScript interfaces (GameState, Room, NPC, Item, etc.)
+- `src/game/generator.ts` - `generateMystery()` creates initial state, picks random victim/murderer/weapon/room
+- `src/game/dialogue.ts` - generates all text responses (question, alibi, examine, etc.)
+- `src/game/houseLayouts.ts` - room definitions, NPC pool, weapon pool
+- `src/styles/index.css` - DOS retro theming
+
+### GameState Structure
+```typescript
+interface GameState {
+  currentRoom: string;
+  inventory: string[];           // Item IDs player has picked up
+  rooms: Room[];
+  npcs: NPC[];
+  items: Item[];
+  murderWeapon: string;          // Item ID
+  murderRoom: string;            // Room ID
+  murderer: string;              // NPC ID
+  victim: string;                // Name (not an active NPC)
+  messages: string[];            // Last 20 shown in TextPanel
+  selectedEntity: { type: "npc" | "item"; id: string } | null;
+  gamePhase: "intro" | "playing" | "assembled" | "won" | "lost";
+}
+```
+
+### Message Flow
+1. User clicks button in CommandBar
+2. Handler in App.tsx calls dialogue generator from `dialogue.ts`
+3. Result added to `gameState.messages` via `addMessage()`
+4. TextPanel re-renders and auto-scrolls to bottom
+
+### Debug Mode
+Visit `#debug` URL hash to show DEBUG button that dumps mystery solution to text panel.
+
+### Backend (src/main.tsx) - NOT YET IMPLEMENTED
+- OPTIONAL: Hono server with simple REST API
+- OPTIONAL: Cloudflare KV for persistence
+- Currently all state is client-side only (lost on refresh)
 
 ### Build Configuration
 - Vite with Preact preset
