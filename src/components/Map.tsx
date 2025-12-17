@@ -171,7 +171,7 @@ function RoomComponent({
           }}
           title={item.name}
         >
-          <span class="entity-icon">■</span>
+          <span class="entity-icon">{item.icon}</span>
         </div>
       ))}
 

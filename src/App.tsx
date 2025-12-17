@@ -181,9 +181,9 @@ export function App() {
           {gameState.inventory.length === 0
             ? 'Empty'
             : gameState.inventory
-                .map((id) => findItem(gameState, id)?.name)
-                .filter(Boolean)
-                .join(', ')}
+              .map((id) => findItem(gameState, id)?.name)
+              .filter(Boolean)
+              .join(', ')}
         </div>
       </header>
 

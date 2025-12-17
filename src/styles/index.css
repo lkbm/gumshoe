@@ -73,7 +73,8 @@ body {
   align-items: center;
   overflow: hidden;
   padding: 10px;
-  min-height: 0; /* Important for flex shrinking */
+  min-height: 0;
+  /* Important for flex shrinking */
 }
 
 .map-container {
@@ -107,9 +108,10 @@ body {
   left: 4px;
   font-size: 10px;
   color: var(--text-color);
-  opacity: 0.7;
+  opacity: 1.0;
   text-transform: uppercase;
   letter-spacing: 1px;
+  z-index: 21;
 }
 
 /* Entities (NPCs and Items) */
@@ -134,6 +136,7 @@ body {
   from {
     filter: brightness(1);
   }
+
   to {
     filter: brightness(1.5);
   }
