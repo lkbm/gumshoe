@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'preact/hooks';
+import { useState, useCallback, useMemo, useEffect } from 'preact/hooks';
 import { GameState } from './game/types';
 import { generateMystery, findNPC, findItem, findRoom } from './game/generator';
 import {
@@ -21,6 +21,16 @@ function createInitialState(): GameState {
 
 export function App() {
   const [gameState, setGameState] = useState<GameState>(createInitialState);
+  const [debugMode, setDebugMode] = useState(() => window.location.hash === '#debug');
+
+  // Listen for hash changes to toggle debug mode
+  useEffect(() => {
+    const handleHashChange = () => {
+      setDebugMode(window.location.hash === '#debug');
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const addMessage = useCallback((message: string) => {
     setGameState((state) => ({
@@ -165,6 +175,26 @@ export function App() {
     setGameState(createInitialState());
   }, []);
 
+  const handleDebug = useCallback(() => {
+    const murdererNpc = findNPC(gameState, gameState.murderer);
+    const murderRoom = findRoom(gameState, gameState.murderRoom);
+    const murderWeapon = findItem(gameState, gameState.murderWeapon);
+
+    const debugMessages = [
+      '=== DEBUG INFO ===',
+      `Victim: ${gameState.victim}`,
+      `Murderer: ${murdererNpc?.name ?? 'Unknown'}`,
+      `Murder Room: ${murderRoom?.name ?? 'Unknown'}`,
+      `Murder Weapon: ${murderWeapon?.name ?? 'Unknown'}`,
+      '==================',
+    ];
+
+    setGameState((state) => ({
+      ...state,
+      messages: [...state.messages.slice(-20), ...debugMessages],
+    }));
+  }, [gameState]);
+
   const hasAnyWeapon = useMemo(
     () => gameState.inventory.length > 0,
     [gameState.inventory]
@@ -185,6 +215,11 @@ export function App() {
               .filter(Boolean)
               .join(', ')}
         </div>
+        {debugMode && (
+          <button class="debug-button" onClick={handleDebug}>
+            DEBUG
+          </button>
+        )}
       </header>
 
       <main class="game-main">

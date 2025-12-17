@@ -65,6 +65,23 @@ body {
   color: var(--item-color);
 }
 
+.debug-button {
+  background-color: #442244;
+  color: #ff88ff;
+  border: 2px solid #884488;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.debug-button:hover {
+  background-color: #553355;
+  border-color: #aa66aa;
+}
+
 /* Main map area */
 .game-main {
   flex: 1;

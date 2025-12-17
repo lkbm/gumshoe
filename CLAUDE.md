@@ -53,7 +53,6 @@ npm run preview      # Preview production build
 There are a couple screenshots of the original Sleuth game in the `sleuth_screenshots/` folder for reference.
 
 ## TODOs
-* Make a "Debug" mode, so if I visit http://localhost:5175/#debug it will let me see the game data (victim, murderer, etc.)
 * You can currently click and perform actions with any character or item, regardless of whether you're in the room. You should have to be in the room to do that.
 * Only let me see people/items in same room as me
 * Arrow key movement, and type to do actions?
