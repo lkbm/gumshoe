@@ -2,6 +2,8 @@ import { GamePhase } from '../game/types';
 
 interface CommandBarProps {
   selectedEntity: { type: 'npc' | 'item'; id: string } | null;
+  selectedName: string | null;
+  selectedIcon: string | null;
   hasWeapon: boolean;
   isAssembled: boolean;
   gamePhase: GamePhase;
@@ -17,6 +19,8 @@ interface CommandBarProps {
 
 export function CommandBar({
   selectedEntity,
+  selectedName,
+  selectedIcon,
   hasWeapon,
   isAssembled,
   gamePhase,
@@ -46,6 +50,14 @@ export function CommandBar({
 
   return (
     <div class="command-bar">
+      {/* Selected entity display */}
+      <div class="selected-display">
+        {selectedIcon && <span class="selected-icon">{selectedIcon}</span>}
+        {selectedName ?? '\u00A0'}
+      </div>
+
+      <div class="cmd-separator" />
+
       {/* Item commands */}
       <button
         class="cmd-btn"

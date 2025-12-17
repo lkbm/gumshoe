@@ -229,6 +229,22 @@ export function App() {
 
   const isAssembled = gameState.gamePhase === 'assembled';
 
+  const selectedName = useMemo(() => {
+    if (!gameState.selectedEntity) return null;
+    if (gameState.selectedEntity.type === 'npc') {
+      return findNPC(gameState, gameState.selectedEntity.id)?.name ?? null;
+    }
+    return findItem(gameState, gameState.selectedEntity.id)?.name ?? null;
+  }, [gameState]);
+
+  const selectedIcon = useMemo(() => {
+    if (!gameState.selectedEntity) return null;
+    if (gameState.selectedEntity.type === 'npc') {
+      return '☺';
+    }
+    return findItem(gameState, gameState.selectedEntity.id)?.icon ?? null;
+  }, [gameState]);
+
   return (
     <div class="game-container">
       <header class="game-header">
@@ -267,6 +283,8 @@ export function App() {
         <TextPanel messages={gameState.messages} />
         <CommandBar
           selectedEntity={gameState.selectedEntity}
+          selectedName={selectedName}
+          selectedIcon={selectedIcon}
           hasWeapon={hasAnyWeapon}
           isAssembled={isAssembled}
           gamePhase={gameState.gamePhase}

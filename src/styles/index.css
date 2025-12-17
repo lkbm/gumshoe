@@ -284,6 +284,21 @@ body {
   padding: 10px;
   background-color: var(--room-bg);
   border: 2px solid var(--wall-color);
+  align-items: center;
+}
+
+.selected-display {
+  width: 130px;
+  font-size: 14px;
+  color: var(--selected-color);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-icon {
+  margin-right: 6px;
 }
 
 .cmd-btn {
