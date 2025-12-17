@@ -136,44 +136,49 @@ function RoomComponent({
     >
       <span class="room-name">{room.name}</span>
 
-      {/* Render NPCs in room */}
-      {npcs.map((npc, idx) => (
-        <div
-          key={npc.id}
-          class={`entity npc ${selectedEntity?.type === 'npc' && selectedEntity.id === npc.id ? 'selected' : ''} ${npc.isMurderer ? '' : ''}`}
-          style={{
-            left: `${20 + (idx % 3) * 30}px`,
-            top: `${30 + Math.floor(idx / 3) * 30}px`,
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectNPC(npc.id);
-          }}
-          title={npc.name}
-        >
-          <span class="entity-icon">☺</span>
-          <span class="entity-name">{npc.name}</span>
-        </div>
-      ))}
+      {/* Only render NPCs and items in current room */}
+      {isCurrent && (
+        <>
+          {/* Render NPCs in room */}
+          {npcs.map((npc, idx) => (
+            <div
+              key={npc.id}
+              class={`entity npc ${selectedEntity?.type === 'npc' && selectedEntity.id === npc.id ? 'selected' : ''}`}
+              style={{
+                left: `${20 + (idx % 3) * 30}px`,
+                top: `${30 + Math.floor(idx / 3) * 30}px`,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectNPC(npc.id);
+              }}
+              title={npc.name}
+            >
+              <span class="entity-icon">☺</span>
+              <span class="entity-name">{npc.name}</span>
+            </div>
+          ))}
 
-      {/* Render items in room */}
-      {items.map((item, idx) => (
-        <div
-          key={item.id}
-          class={`entity item ${selectedEntity?.type === 'item' && selectedEntity.id === item.id ? 'selected' : ''}`}
-          style={{
-            right: `${10 + (idx % 2) * 25}px`,
-            bottom: `${10 + Math.floor(idx / 2) * 25}px`,
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectItem(item.id);
-          }}
-          title={item.name}
-        >
-          <span class="entity-icon">{item.icon}</span>
-        </div>
-      ))}
+          {/* Render items in room */}
+          {items.map((item, idx) => (
+            <div
+              key={item.id}
+              class={`entity item ${selectedEntity?.type === 'item' && selectedEntity.id === item.id ? 'selected' : ''}`}
+              style={{
+                right: `${10 + (idx % 2) * 25}px`,
+                bottom: `${10 + Math.floor(idx / 2) * 25}px`,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectItem(item.id);
+              }}
+              title={item.name}
+            >
+              <span class="entity-icon">{item.icon}</span>
+            </div>
+          ))}
+        </>
+      )}
 
       {/* Player indicator */}
       {isCurrent && (

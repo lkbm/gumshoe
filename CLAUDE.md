@@ -90,6 +90,4 @@ npm run preview      # Preview production build
 There are a couple screenshots of the original Sleuth game in the `sleuth_screenshots/` folder for reference.
 
 ## TODOs
-* You can currently click and perform actions with any character or item, regardless of whether you're in the room. You should have to be in the room to do that.
-* Only let me see people/items in same room as me
 * Arrow key movement, and type to do actions?
