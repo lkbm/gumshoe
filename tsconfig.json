@@ -2,6 +2,8 @@
 	"files": [],
 	"references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
 	"compilerOptions": {
-		"types": ["@cloudflare/workers-types/2023-07-01"]
+		"types": ["worker-configuration.d.ts"],
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact"
 	}
 }
