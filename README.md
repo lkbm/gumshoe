@@ -1,6 +1,6 @@
 # Gumshoe: A simple rewrite of Sleuth
 
-Sleuth is a classic DOS game by Eric N. Miller. You can play it online various places, including The Internet Archive's DOS Games Archive: [sleuth - A Murder Mystery](https://archive.org/details/msdos_Sleuth_-_A_Murder_Mystery_1983).
+Sleuth is a classic DOS game by Eric N. Miller. You can play it online various places, including The Internet Archive's DOS Games Archive: [Sleuth - A Murder Mystery](https://archive.org/details/msdos_Sleuth_-_A_Murder_Mystery_1983).
 
 It started as a fairly faithful recreation, but will likely morph into a more complex puzzle game over time. It's currently got a few issues.
 
